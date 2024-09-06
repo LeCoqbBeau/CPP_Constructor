@@ -1,12 +1,16 @@
-NAME = no_name
+NAME = CPP_Constructor
 
 INCLUDES = inc/
 
-CPP_FLAGS = -I$(INCLUDES) -Wall -Werror -Wextra -std=c++98
+CPP_FLAGS = -I$(INCLUDES) -Wall -Werror -Wextra -g
 CC = c++
 
 SRC_DIR = src/
-SRC_NAME =	
+SRC_NAME =	main.cpp \
+			CPP_Constructor.cpp \
+			ClassInfo.cpp \
+			AttributeList.cpp \
+			AttributeInfo.cpp
 
 OBJ_DIR = obj/
 OBJ_NAME = $(SRC_NAME:.cpp=.o)
