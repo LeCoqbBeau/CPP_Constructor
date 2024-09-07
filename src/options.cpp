@@ -34,7 +34,7 @@ Setting getopts(int count, char *args[]) {
 	for(int i = 0; i < count; i++) {
 		std::string arg = args[i];
 		if (arg == "-i" || arg == "--invert") {
-			ret.inverted = !ret.inverted;
+			ret.inverted = true;
 		} else if (arg == "-p" || arg == "--prefix") {
 			i++;
 			if(count - i < 1)
@@ -44,13 +44,13 @@ Setting getopts(int count, char *args[]) {
 				throw std::logic_error("prefix should be define as this regex : [a-zA-Z_]([a-zA-Z0-9_])*");
 			ret.prefix = prefix;
 		} else if (arg == "-d" || arg == "--pragma") {
-			ret.pragma = !ret.pragma;
+			ret.pragma = true;
 		} else if (arg == "-l" || arg == "--lib") {
-			ret.lib = !ret.lib;
+			ret.lib = true;
 		} else if (arg == "-c" || arg == "--color") {
-			ret.color = !ret.color;
+			ret.color = true;
 		} else if (arg == "-a" || arg == "--announce") {
-			ret.announcer = !ret.announcer;
+			ret.announcer = true;
 		} else {
 			throw std::logic_error("unknown argument : " + arg);
 		}

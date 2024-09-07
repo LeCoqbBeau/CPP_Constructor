@@ -69,7 +69,25 @@ void CPP_Constructor::_printHelp() {
 
 void CPP_Constructor::_createClass() {
 	ClassInfo *newClass = new ClassInfo;
+
 	newClass->setName(userInput("Enter the class's name", userInputBypass));
+	{
+		std::string classname;
+		std::string camelcase;
+		classname = newClass->getName();
+		camelcase += toupper(classname[0]);
+		for (ulong i = 1; i < classname.length(); ++i) {
+			if (classname[i] == '_')
+			{
+				i++;
+				camelcase += toupper(classname[i]);
+			}
+			else
+				camelcase += tolower(classname[i]);
+		}
+		newClass->setName(camelcase);
+	} // Puts the class name in camel casing
+
 	for (ulong i = 0; i < _classes.size(); ++i) {
 		if (_classes[i]->getName() == newClass->getName())
 		{
@@ -135,20 +153,12 @@ void CPP_Constructor::_exportClass(Setting setting) {
 static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
 	h << "public:" << std::endl;
 
-	AttributeInfo *head = classInfo->getAttribute().getHead();
-	std::string snake_cased;
-	std::string head_name;
-	head_name = head->getName();
-	snake_cased += tolower(head_name[0]);
-	while(head != nullptr) {
-		for (ulong i = 1; i < head_name.length(); ++i) {
-			if (isupper(head_name[i]))
-				snake_cased += '_';
-			snake_cased += tolower(head_name[i]);
-		}
-		h << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
-		head = head->getNext();
-	}
+	// Orthodox Canonical Form
+
+
+
+	// Accessors
+
 }
 
 static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
@@ -177,7 +187,6 @@ static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting settin
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream h;
 	std::string uppercase;
-	std::string camelcase;
 	h.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
 	if (!h.is_open())
 	{
@@ -187,16 +196,6 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	uppercase = classInfo->getName();
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
-	camelcase += uppercase[0];
-	for (ulong i = 1; i < uppercase.length(); ++i) {
-		if (uppercase[i] == '_')
-		{
-			i++;
-			camelcase += uppercase[i];
-		}
-		else
-			camelcase += tolower(uppercase[i]);
-	}
 	if(setting.pragma) {
 			h << "#pragma once" << std::endl;
 	} else {
