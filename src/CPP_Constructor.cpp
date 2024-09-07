@@ -77,7 +77,7 @@ void CPP_Constructor::_createClass(Setting *setting) {
 		classname = newClass->getName();
 		camelcase += toupper(classname[0]);
 		for (ulong i = 1; i < classname.length(); ++i) {
-			if (classname[i] == '_')
+			if (classname[i] == '_' || isspace(classname[i]))
 			{
 				i++;
 				camelcase += toupper(classname[i]);
