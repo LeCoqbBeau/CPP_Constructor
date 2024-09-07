@@ -28,7 +28,7 @@ private:
 	void _editClass();
 	void _exportClass(Setting setting);
 	void _writeH(ClassInfo *classInfo, Setting setting);
-	void _writeCPP(ClassInfo *classInfo);
+	void _writeCPP(ClassInfo *classInfo, Setting setting);
 public:
 	void createOutputDir();
 	void shellStart(Setting setting);

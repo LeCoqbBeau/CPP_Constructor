@@ -156,7 +156,7 @@ void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream hpp;
 	std::string uppercase;
-	hpp.open(OUTPUT_DIR "/inc/" + classInfo->getName(), std::ios::trunc);
+	hpp.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
 	if (!hpp.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
@@ -188,7 +188,7 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	hpp.close();
 }
 
-void CPP_Constructor::_writeCPP(ClassInfo *classInfo) {
+void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 	(void)classInfo;
 }
 
