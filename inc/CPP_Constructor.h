@@ -23,7 +23,7 @@ class CPP_Constructor {
 private:
 	std::vector<ClassInfo*, std::allocator<ClassInfo*>> _classes;
 	void _printHelp();
-	void _createClass();
+	void _createClass(Setting *setting);
 	void _printClasses();
 	void _editClass();
 	void _exportClass(Setting setting);

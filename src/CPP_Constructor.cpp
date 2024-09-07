@@ -37,13 +37,13 @@ void CPP_Constructor::shellStart(Setting setting) {
 		else if (input == "exit")
 			break ;
 		else if (input == "create")
-			_createClass();
+			_createClass(&setting);
 		else if (input == "print")
 			_printClasses();
 		else if (input == "edit")
 			_editClass();
 		else if (input == "cne") {
-			_createClass();
+			_createClass(&setting);
 			if (!_classes.empty())
 				_classes.back()->shellStart();
 		}
@@ -67,8 +67,8 @@ void CPP_Constructor::_printHelp() {
 	std::cout << std::endl;
 }
 
-void CPP_Constructor::_createClass() {
-	ClassInfo *newClass = new ClassInfo;
+void CPP_Constructor::_createClass(Setting *setting) {
+	ClassInfo *newClass = new ClassInfo(setting);
 
 	newClass->setName(userInput("Enter the class's name", userInputBypass));
 	{
@@ -195,18 +195,20 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 	h << "\t// Orthodox Canonical Form" << std::endl;
 	h << "\t" << classInfo->getName() << "();" << std::endl;
 	{
-		h << "\t" << classInfo->getName() << "(";
 		loop = classInfo->getAttribute().getHead();
-		while (loop->getNext())
-		{
-			h << "const " << loop->getType() << " &" << loop->getName() << ", ";
-			loop = loop->getNext();
-		}
-		h << "const " << loop->getType() << " &" << loop->getName();
-		h << ");" << std::endl;
+                if(loop) {
+		        h << "\t" << classInfo->getName() << "(";
+		        while (loop && loop->getNext())
+		        {
+		        	h << "const " << loop->getType() << " &" << loop->getName() << ", ";
+		        	loop = loop->getNext();
+		        }
+		        h << "const " << loop->getType() << " &" << loop->getName();
+		        h << ");" << std::endl;
+                }
 	}
 	h << "\t" << classInfo->getName() << "(const " << classInfo->getName() << " &src);" << std::endl;
-	h << "\t" << classInfo->getName() << "& operator = (const " << classInfo->getName() << " &rhs);" << std::endl;
+	h << "\t" << classInfo->getName() << "&operator=(const " << classInfo->getName() << " &rhs);" << std::endl;
 	h << "\t~" << classInfo->getName() << "();" << std::endl;
 
 	h << std::endl;
@@ -266,6 +268,12 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 		h << "# include <iostream>" << std::endl;
 		h << "# include <string>" << std::endl;
 	}
+        std::vector<Includes> &incs = classInfo->getIncludes();
+        if(!incs.empty() && !setting.lib) h << std::endl;
+        for(auto inc : incs) {
+                if(!inc.local) h << "# include <" << inc.name << ">" << std::endl;
+                else h << "# include \"" << inc.name << "\"" << std::endl;
+        }
 	if (setting.color)
 		h << "# include \"colors.h\"" << std::endl;
 	h << std::endl;

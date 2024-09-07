@@ -3,6 +3,7 @@
 //
 
 #include "AttributeList.h"
+#include "macros.h"
 
 AttributeList::AttributeList() {
 	this->_head = nullptr;
@@ -33,21 +34,10 @@ void AttributeList::append(AttributeInfo *newAttr) {
 	loop->setNext(newAttr);
 }
 
-static bool isValidType(std::string input)
-{
-	if (!isalpha(input[0]) && input[0] != '_')
-		return true;
-	for (char c: input) {
-		if (!isalnum(c) && c != '_' && c != ':' && c != ' ')
-			return true;
-	}
-	return false;
-}
-
 void AttributeList::create() {
 	AttributeInfo *created = new AttributeInfo();
 	created->setNext(nullptr);
-	created->setType(userInput("Please enter the attribute's type", isValidType));
+	created->setType(userInput("Please enter the attribute's type", userInputBypass));
 	created->setName(userInput("Please enter the attribute's name", userInputBypass));
 	append(created);
 }

@@ -3,8 +3,10 @@
 //
 
 #include "ClassInfo.h"
+#include "macros.h"
 
-ClassInfo::ClassInfo() {
+ClassInfo::ClassInfo(Setting *setting) {
+        _setting = setting;
 	_protected = false;
 }
 
@@ -43,9 +45,30 @@ void ClassInfo::shellStart() {
 			_editAttr();
 		else if (input == "prot")
 			_protected = true;
+                else if (input == "include")
+                        _addInclude();
 		else
 			std::cout << YLW "Unrecognized input, verify using the \'help\' command" CLR << std::endl;
 	}
+}
+
+static bool isLocalOrGlobal(std::string input)
+{
+	if (input == "L")
+		return false;
+	if (input == "G")
+		return false;
+	return true;
+}
+
+void ClassInfo::_addInclude() {
+        Includes inc;
+        std::string input = userInput("Enter the file to include", userInputBypass);
+        inc.name = input;
+        input = userInput("Is this header (L)ocal or (G)lobal", isLocalOrGlobal);
+        if(input == "G") inc.local = false;
+        else inc.local = true;
+        _includes.push_back(inc);
 }
 
 void ClassInfo::_printHelp() {
@@ -56,7 +79,12 @@ void ClassInfo::_printHelp() {
 	std::cout << "\tprint: Prints the class's attribute(s)" << std::endl;
 	std::cout << "\tedit: Edits an attribute's name or type" << std::endl;
         std::cout << "\tprot: Set class to use protected instead of private" << std::endl;
+        std::cout << "\tinclude: add include in the class header" << std::endl;
 	std::cout << std::endl;
+}
+
+std::vector<Includes> &ClassInfo::getIncludes() {
+        return _includes;
 }
 
 bool ClassInfo::isProtected() {
@@ -68,7 +96,7 @@ void ClassInfo::_printAttr() {
 	std::cout << "Class: " BOLD << _name << CLR << std::endl;
 	while (loop)
 	{
-		std::cout << "\t" << loop->getType() << " _" << loop->getName() << std::endl;
+		std::cout << "\t" << loop->getType() << " " << _setting->prefix << loop->getName() << std::endl;
 		loop = loop->getNext();
 	}
 	std::cout << std::endl;
@@ -83,22 +111,11 @@ static bool isTypeOrName(std::string input)
 	return true;
 }
 
-static bool isValidType(std::string input)
-{
-	if (!isalpha(input[0]) && input[0] != '_')
-		return true;
-	for (char c: input) {
-		if (!isalnum(c) && c != '_' && c != ':' && c != ' ')
-			return true;
-	}
-	return false;
-}
-
 void ClassInfo::_editAttr() {
 	AttributeInfo *loop = getAttribute().getHead();
 	std::string input;
 	_printAttr();
-	input = userInput("Enter the name (without \'_\') of the attribute to edit", userInputBypass);
+	input = userInput("Enter the name (without the prefix \"" + _setting->prefix + "\") of the attribute to edit", userInputBypass);
 	while (loop) {
 		if (loop->getName() == input)
 			break;
@@ -113,5 +130,5 @@ void ClassInfo::_editAttr() {
 	if (input == "N")
 		loop->setName(userInput("Enter the new name", userInputBypass));
 	else
-		loop->setType(userInput("Enter the new type", isValidType));
+		loop->setType(userInput("Enter the new type", userInputBypass));
 }
