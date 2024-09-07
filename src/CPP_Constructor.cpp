@@ -3,6 +3,7 @@
 //
 
 #include "CPP_Constructor.h"
+#include "AttributeInfo.h"
 #include "ClassInfo.h"
 
 void CPP_Constructor::createOutputDir() {
@@ -125,17 +126,34 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << " ( ";
 	for (ClassInfo *loop: _classes) {
 		std::cout << loop->getName() << " ";
-		_writeH(loop);
+		_writeH(loop, setting);
 		_writeCPP(loop);
 	}
 	std::cout << ") " << std::endl;
 
 }
 
-void CPP_Constructor::_writeH(ClassInfo *classInfo) {
+void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+        (void) classInfo;
+        (void) setting;
+	hpp << "public:" << std::endl;
+}
+
+void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+	hpp << "private:" << std::endl;
+	if (classInfo->getAttribute().getHead()) {
+                AttributeInfo *head = classInfo->getAttribute().getHead();
+                while(head != nullptr) {
+                        hpp << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
+                        head = head->getNext();
+                }
+        }
+}
+
+void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream hpp;
 	std::string uppercase;
-	hpp.open(OUTPUT_DIR"/inc/" + classInfo->getName(), std::ios::trunc);
+	hpp.open(OUTPUT_DIR "/inc/" + classInfo->getName(), std::ios::trunc);
 	if (!hpp.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
@@ -144,18 +162,26 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo) {
 	uppercase = classInfo->getName();
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
-	hpp << "#ifndef " << uppercase << "_H" << std::endl;
-	hpp << "# define " << uppercase << "_H" << std::endl;
+        if(setting.pragma) {
+                hpp << "#pragma once" << std::endl;
+        } else {
+        	hpp << "#ifndef " << uppercase << "_H" << std::endl;
+        	hpp << "# define " << uppercase << "_H" << std::endl;
+        }
 	hpp << std::endl;
 	hpp << "class " << classInfo->getName() << std::endl;
 	hpp << "{" << std::endl;
-	hpp << "public:" << std::endl;
-	if (classInfo->getAttribute().getHead())
-		;
-	hpp << "private:" << std::endl;
+        if(!setting.inverted) {
+                writePublicH(hpp, classInfo, setting);
+                writePrivateH(hpp, classInfo, setting);
+        } else {
+                writePrivateH(hpp, classInfo, setting);
+                writePublicH(hpp, classInfo, setting);
+        }
 	hpp << "}" << std::endl;
 	hpp << std::endl;
-	hpp << "#endif //" << uppercase << std::endl;
+	if(!setting.pragma)
+                hpp << "#endif //" << uppercase << std::endl;
 	hpp.close();
 }
 
