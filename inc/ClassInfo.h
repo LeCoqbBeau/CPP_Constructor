@@ -11,12 +11,17 @@
 #include "AttributeList.h"
 #include "options.h"
 
+struct Includes {
+        bool local;
+        std::string name;
+};
+
 class ClassInfo {
 	private:
 		std::string _name;
 		bool _protected;
 		AttributeList _attributes;
-                std::vector<std::string> _includes;
+                std::vector<Includes> _includes;
                 Setting *_setting;
 		void _printHelp();
 		void _editAttr();
@@ -28,7 +33,7 @@ class ClassInfo {
 		void setName(const std::string &name);
 		bool isProtected();
 		AttributeList &getAttribute();
-                std::vector<std::string> &getIncludes();
+                std::vector<Includes> &getIncludes();
 		void shellStart();
 };
 

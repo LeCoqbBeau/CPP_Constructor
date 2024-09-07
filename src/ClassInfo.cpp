@@ -52,9 +52,23 @@ void ClassInfo::shellStart() {
 	}
 }
 
+static bool isLocalOrGlobal(std::string input)
+{
+	if (input == "L")
+		return false;
+	if (input == "G")
+		return false;
+	return true;
+}
+
 void ClassInfo::_addInclude() {
+        Includes inc;
         std::string input = userInput("Enter the file to include", userInputBypass);
-        _includes.push_back(input);
+        inc.name = input;
+        input = userInput("Is this header (L)ocal or (G)lobal", isLocalOrGlobal);
+        if(input == "G") inc.local = false;
+        else inc.local = true;
+        _includes.push_back(inc);
 }
 
 void ClassInfo::_printHelp() {
@@ -69,7 +83,7 @@ void ClassInfo::_printHelp() {
 	std::cout << std::endl;
 }
 
-std::vector<std::string> &ClassInfo::getIncludes() {
+std::vector<Includes> &ClassInfo::getIncludes() {
         return _includes;
 }
 
