@@ -132,24 +132,26 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << ") " << std::endl;
 }
 
-void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
-        (void) classInfo;
-        (void) setting;
+static void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+	(void) classInfo;
+	(void) setting;
 	hpp << "public:" << std::endl;
 }
 
-void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
-        if(!classInfo->isProtected())
-                hpp << "private:" << std::endl;
-        else
-                hpp << "protected:" << std::endl;
-        if (classInfo->getAttribute().getHead()) {
-                AttributeInfo *head = classInfo->getAttribute().getHead();
-                while(head != nullptr) {
-                        hpp << '\t' << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
-                        head = head->getNext();
-                }
-        }
+static void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+	std::string snake_cased;
+	if(!classInfo->isProtected())
+		hpp << "private:" << std::endl;
+	else
+		hpp << "protected:" << std::endl;
+	if (classInfo->getAttribute().getHead()) {
+		AttributeInfo *head = classInfo->getAttribute().getHead();
+		while(head != nullptr) {
+
+			hpp << '\t' << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
+			head = head->getNext();
+		}
+	}
 }
 
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
@@ -164,32 +166,32 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	uppercase = classInfo->getName();
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
-        if(setting.pragma) {
-                hpp << "#pragma once" << std::endl;
-        } else {
-        	hpp << "#ifndef " << uppercase << "_H" << std::endl;
-        	hpp << "# define " << uppercase << "_H" << std::endl;
-        }
+	if(setting.pragma) {
+			hpp << "#pragma once" << std::endl;
+	} else {
+		hpp << "#ifndef " << uppercase << "_H" << std::endl;
+		hpp << "# define " << uppercase << "_H" << std::endl;
+	}
 	hpp << std::endl;
 	hpp << "class " << classInfo->getName() << std::endl;
 	hpp << "{" << std::endl;
         if(!setting.inverted) {
-                writePublicH(hpp, classInfo, setting);
-                writePrivateH(hpp, classInfo, setting);
+			writePublicH(hpp, classInfo, setting);
+			writePrivateH(hpp, classInfo, setting);
         } else {
-                writePrivateH(hpp, classInfo, setting);
-                writePublicH(hpp, classInfo, setting);
+			writePrivateH(hpp, classInfo, setting);
+			writePublicH(hpp, classInfo, setting);
         }
 	hpp << "}" << std::endl;
 	hpp << std::endl;
 	if(!setting.pragma)
-                hpp << "#endif //" << uppercase << std::endl;
+		hpp << "#endif //" << uppercase << std::endl;
 	hpp.close();
 }
 
 void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 	(void)classInfo;
-        (void)setting;
+	(void)setting;
 }
 
 std::string userInput(const std::string &msg, bool(*check)(std::string)) {
