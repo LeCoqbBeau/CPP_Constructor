@@ -40,3 +40,8 @@ fclean: clean
 all: $(NAME)
 
 re: fclean all
+
+PREFIX=/usr/bin
+
+install: all
+	cp $(NAME) $(PREFIX)/$(NAME)
