@@ -3,6 +3,7 @@
 //
 
 #include "ClassInfo.h"
+#include "macros.h"
 
 ClassInfo::ClassInfo(Setting *setting) {
         _setting = setting;
@@ -44,9 +45,16 @@ void ClassInfo::shellStart() {
 			_editAttr();
 		else if (input == "prot")
 			_protected = true;
+                else if (input == "include")
+                        _addInclude();
 		else
 			std::cout << YLW "Unrecognized input, verify using the \'help\' command" CLR << std::endl;
 	}
+}
+
+void ClassInfo::_addInclude() {
+        std::string input = userInput("Enter the file to include", userInputBypass);
+        _includes.push_back(input);
 }
 
 void ClassInfo::_printHelp() {
@@ -57,7 +65,12 @@ void ClassInfo::_printHelp() {
 	std::cout << "\tprint: Prints the class's attribute(s)" << std::endl;
 	std::cout << "\tedit: Edits an attribute's name or type" << std::endl;
         std::cout << "\tprot: Set class to use protected instead of private" << std::endl;
+        std::cout << "\tinclude: add include in the class header" << std::endl;
 	std::cout << std::endl;
+}
+
+std::vector<std::string> &ClassInfo::getIncludes() {
+        return _includes;
 }
 
 bool ClassInfo::isProtected() {
@@ -84,17 +97,6 @@ static bool isTypeOrName(std::string input)
 	return true;
 }
 
-static bool isValidType(std::string input)
-{
-	if (!isalpha(input[0]) && input[0] != '_')
-		return true;
-	for (char c: input) {
-		if (!isalnum(c) && c != '_' && c != ':' && c != ' ')
-			return true;
-	}
-	return false;
-}
-
 void ClassInfo::_editAttr() {
 	AttributeInfo *loop = getAttribute().getHead();
 	std::string input;
@@ -114,5 +116,5 @@ void ClassInfo::_editAttr() {
 	if (input == "N")
 		loop->setName(userInput("Enter the new name", userInputBypass));
 	else
-		loop->setType(userInput("Enter the new type", isValidType));
+		loop->setType(userInput("Enter the new type", userInputBypass));
 }

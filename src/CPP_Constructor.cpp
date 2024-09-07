@@ -206,7 +206,7 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 		h << ");" << std::endl;
 	}
 	h << "\t" << classInfo->getName() << "(const " << classInfo->getName() << " &src);" << std::endl;
-	h << "\t" << classInfo->getName() << "& operator = (const " << classInfo->getName() << " &rhs);" << std::endl;
+	h << "\t" << classInfo->getName() << "&operator=(const " << classInfo->getName() << " &rhs);" << std::endl;
 	h << "\t~" << classInfo->getName() << "();" << std::endl;
 
 	h << std::endl;
@@ -266,6 +266,9 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 		h << "# include <iostream>" << std::endl;
 		h << "# include <string>" << std::endl;
 	}
+        std::vector<std::string> &incs = classInfo->getIncludes();
+        if(!incs.empty() && !setting.lib) h << std::endl;
+        for(auto inc : incs) h << "# include <" << inc << ">" << std::endl;
 	if (setting.color)
 		h << "# include \"colors.h\"" << std::endl;
 	h << std::endl;
