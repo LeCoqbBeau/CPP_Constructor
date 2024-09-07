@@ -192,36 +192,36 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 
 	h << "public:" << std::endl;
 
-	h << "\t// Orthodox Canonical Form" << std::endl;
-	h << "\t" << classInfo->getName() << "();" << std::endl;
 	{
-		loop = classInfo->getAttribute().getHead();
-                if(loop) {
-		        h << "\t" << classInfo->getName() << "(";
-		        while (loop && loop->getNext())
-		        {
-		        	h << "const " << loop->getType() << " &" << loop->getName() << ", ";
-		        	loop = loop->getNext();
-		        }
-		        h << "const " << loop->getType() << " &" << loop->getName();
-		        h << ");" << std::endl;
-                }
+		h << "\t// Orthodox Canonical Form" << std::endl;
+		h << "\t" << classInfo->getName() << "();" << std::endl;
+		{
+			loop = classInfo->getAttribute().getHead();
+			if(loop) {
+				h << "\t" << classInfo->getName() << "(";
+				while (loop && loop->getNext())
+				{
+					h << "const " << loop->getType() << " &" << loop->getName() << ", ";
+					loop = loop->getNext();
+				}
+				h << "const " << loop->getType() << " &" << loop->getName();
+				h << ");" << std::endl;
+			}
+		}
+		h << "\t" << classInfo->getName() << "(const " << classInfo->getName() << " &src);" << std::endl;
+		h << "\t" << classInfo->getName() << "&operator=(const " << classInfo->getName() << " &rhs);" << std::endl;
+		h << "\t~" << classInfo->getName() << "();" << std::endl;
 	}
-	h << "\t" << classInfo->getName() << "(const " << classInfo->getName() << " &src);" << std::endl;
-	h << "\t" << classInfo->getName() << "&operator=(const " << classInfo->getName() << " &rhs);" << std::endl;
-	h << "\t~" << classInfo->getName() << "();" << std::endl;
-
 	h << std::endl;
-
-	h << "\t// Accessors" << std::endl;
 	{
+		h << "\t// Accessors" << std::endl;
 		std::string camelCased;
 		loop = classInfo->getAttribute().getHead();
 		while (loop)
 		{
 			camelCased = toCamelCase(loop->getName());
 			h << "\t" << loop->getType() << " &get" << camelCased << "();" << std::endl;
-			h << "\t" << "void set" << camelCased << "(const " << loop->getType() << " &" << camelCased << ");" << std::endl;
+			h << "\t" << "void set" << camelCased << "(const " << loop->getType() << " &" << loop->getName() << ");" << std::endl;
 			loop = loop->getNext();
 		}
 	}
@@ -304,152 +304,178 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 		return;
 	}
 	cpp << "#include \"" << classInfo->getName() << ".h\"" << std::endl;
-	cpp << std::endl;
 	{
-		cpp << classInfo->getName() << "::" << classInfo->getName() << "() {" << std::endl;
-		if (setting.announcer)
+		cpp << std::endl;
+		cpp << "// Canonical Orthodox Form" << std::endl;
 		{
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BGRN ";
-			cpp << '"' << classInfo->getName() << " Default Constructor called\"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << ";" << std::endl;
+			cpp << classInfo->getName() << "::" << classInfo->getName() << "() {" << std::endl;
+			if (setting.announcer)
+			{
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BGRN ";
+				cpp << '"' << classInfo->getName() << " Default Constructor called\"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << ";" << std::endl;
 
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BBLK ";
-			cpp << "\" [ \" << &this << \" ] \"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << " << std::endl;" << std::endl;
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BBLK ";
+				cpp << "\" [ \" << &this << \" ] \"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << " << std::endl;" << std::endl;
+			}
+			cpp << "}" << std::endl;
 		}
-		cpp << "}" << std::endl;
-	}
-	cpp << std::endl;
+		cpp << std::endl;
+		do {
+			loop = classInfo->getAttribute().getHead();
+			if (!loop)
+				break;
+			cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
+			while (loop->getNext())
+			{
+				cpp << "const " << loop->getType() << " &" << loop->getName() << ", ";
+				loop = loop->getNext();
+			}
+			cpp << "const " << loop->getType() << " &" << loop->getName();
+			cpp << ") {" << std::endl;
+			if (setting.announcer)
+			{
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BGRN ";
+				cpp << '"' << classInfo->getName() << " Parameterized Constructor called\"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << ";" << std::endl;
+
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BBLK ";
+				cpp << "\" [ \" << &this << \" ] \"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << " << std::endl;" << std::endl;
+			}
+			loop = classInfo->getAttribute().getHead();
+			while (loop)
+			{
+				cpp << "\tthis->" << setting.prefix + loop->getName() << " = " << loop->getName() << ";" << std::endl;
+				loop = loop->getNext();
+			}
+			cpp << "}" << std::endl;
+		} while(false);
+		cpp << std::endl;
+		{
+			cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
+			cpp << "const " << classInfo->getName() << " &src) {" << std::endl;
+			if (setting.announcer)
+			{
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BGRN ";
+				cpp << '"' << classInfo->getName() << " Copy Constructor called\"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << ";" << std::endl;
+
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BBLK ";
+				cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << " << std::endl;" << std::endl;
+			}
+			loop = classInfo->getAttribute().getHead();
+			while (loop)
+			{
+				cpp << "\tthis->" << setting.prefix << loop->getName() << " = src." << setting.prefix << loop->getName() << ";" << std::endl;
+				loop = loop->getNext();
+			}
+			cpp << "}" << std::endl;
+		}
+		cpp << std::endl;
+		{
+			cpp << classInfo->getName() << " &" << classInfo->getName() << "::operator=(const " << classInfo->getName() << " &rhs) {" << std::endl;
+			if (setting.announcer)
+			{
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BGRN ";
+				cpp << '"' << classInfo->getName() << " Assignment Operator called\"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << ";" << std::endl;
+
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BBLK ";
+				cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << " << std::endl;" << std::endl;
+			}
+			loop = classInfo->getAttribute().getHead();
+			while (loop)
+			{
+				cpp << "\tthis->" << setting.prefix << loop->getName() << " = rhs." << setting.prefix << loop->getName() << ";" << std::endl;
+				loop = loop->getNext();
+			}
+			cpp << "\treturn *this;" << std::endl;
+			cpp << "}" << std::endl;
+		}
+		cpp << std::endl;
+		{
+			cpp << classInfo->getName() << "::~" << classInfo->getName() << "() {" << std::endl;
+			if (setting.announcer)
+			{
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BGRN ";
+				cpp << '"' << classInfo->getName() << " Destructor called\"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << ";" << std::endl;
+
+				cpp << "\tstd::cout << ";
+				if (setting.color)
+					cpp << "BBLK ";
+				cpp << "\" [ \" << &this << \" ] \"";
+				if (setting.color)
+					cpp << " CLR";
+				cpp << " << std::endl;" << std::endl;
+			}
+			cpp << "}" << std::endl;
+		}
+		cpp << std::endl;
+	} // Constructors, Assignement Operator, Destructor
 	do {
 		loop = classInfo->getAttribute().getHead();
 		if (!loop)
-			break;
-		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
-		while (loop->getNext())
+			break ;
+		cpp << "// Accessors" << std::endl;
+		std::string camelCased;
 		{
-			cpp << "const " << loop->getType() << " &" << loop->getName() << ", ";
-			loop = loop->getNext();
+			while (loop)
+			{
+				camelCased = toCamelCase(loop->getName());
+				cpp << loop->getType() << "& " << classInfo->getName() << "::get" << camelCased << "() {" << std::endl;
+				cpp << "\treturn this->" << setting.prefix << loop->getName() << ";" << std::endl;
+				cpp << "}" << std::endl;
+				cpp << std::endl;
+				cpp << "void " << classInfo->getName() << "::set" << camelCased << "(const "<< loop->getType() << " &"<< loop->getName() << ") {" << std::endl;
+				cpp << "\tthis->" << setting.prefix << loop->getName() << " = " << loop->getName() << ";" << std::endl;
+				cpp << "}" << std::endl;
+				cpp << std::endl;
+				loop = loop->getNext();
+			}
 		}
-		cpp << "const " << loop->getType() << " &" << loop->getName();
-		cpp << ") {" << std::endl;
-		if (setting.announcer)
-		{
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BGRN ";
-			cpp << '"' << classInfo->getName() << " Parameterized Constructor called\"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << ";" << std::endl;
-
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BBLK ";
-			cpp << "\" [ \" << &this << \" ] \"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << " << std::endl;" << std::endl;
-		}
-		loop = classInfo->getAttribute().getHead();
-		while (loop)
-		{
-			cpp << "\tthis->" << setting.prefix + loop->getName() << " = " << loop->getName() << ";" << std::endl;
-			loop = loop->getNext();
-		}
-		cpp << "}" << std::endl;
-	} while(false);
-	cpp << std::endl;
-	{
-		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
-		cpp << "const " << classInfo->getName() << " &src) {" << std::endl;
-		if (setting.announcer)
-		{
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BGRN ";
-			cpp << '"' << classInfo->getName() << " Copy Constructor called\"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << ";" << std::endl;
-
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BBLK ";
-			cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << " << std::endl;" << std::endl;
-		}
-		loop = classInfo->getAttribute().getHead();
-		while (loop)
-		{
-			cpp << "\tthis->" << setting.prefix << loop->getName() << " = src." << setting.prefix << loop->getName() << ";" << std::endl;
-			loop = loop->getNext();
-		}
-		cpp << "}" << std::endl;
-	}
-	cpp << std::endl;
-	{
-		cpp << classInfo->getName() << " &" << classInfo->getName() << "::operator=(const " << classInfo->getName() << " &rhs) {" << std::endl;
-		if (setting.announcer)
-		{
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BGRN ";
-			cpp << '"' << classInfo->getName() << " Assignment Operator called\"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << ";" << std::endl;
-
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BBLK ";
-			cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << " << std::endl;" << std::endl;
-		}
-		loop = classInfo->getAttribute().getHead();
-		while (loop)
-		{
-			cpp << "\tthis->" << setting.prefix << loop->getName() << " = rhs." << setting.prefix << loop->getName() << ";" << std::endl;
-			loop = loop->getNext();
-		}
-		cpp << "\treturn *this;" << std::endl;
-		cpp << "}" << std::endl;
-	}
-	cpp << std::endl;
-	{
-		cpp << classInfo->getName() << "::~" << classInfo->getName() << "() {" << std::endl;
-		if (setting.announcer)
-		{
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BGRN ";
-			cpp << '"' << classInfo->getName() << " Destructor called\"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << ";" << std::endl;
-
-			cpp << "\tstd::cout << ";
-			if (setting.color)
-				cpp << "BBLK ";
-			cpp << "\" [ \" << &this << \" ] \"";
-			if (setting.color)
-				cpp << " CLR";
-			cpp << " << std::endl;" << std::endl;
-		}
-		cpp << "}" << std::endl;
-	}
-	cpp << std::endl;
+	} while (false); // Accessors
+	cpp << "// Methods" << std::endl;
 	cpp.close();
 }
 
