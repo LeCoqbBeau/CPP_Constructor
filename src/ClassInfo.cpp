@@ -37,6 +37,8 @@ void ClassInfo::shellStart() {
 			_printAttr();
 		else if (input == "edit")
 			_editAttr();
+		else if (input == "prot")
+			_protected = true;
 		else
 			std::cout << YLW "Unrecognized input, verify using the \'help\' command" CLR << std::endl;
 	}
@@ -49,7 +51,12 @@ void ClassInfo::_printHelp() {
 	std::cout << "\tadd: Adds an new attribute" << std::endl;
 	std::cout << "\tprint: Prints the class's attribute(s)" << std::endl;
 	std::cout << "\tedit: Edits an attribute's name or type" << std::endl;
+        std::cout << "\tprot: Set class to use protected instead of private" << std::endl;
 	std::cout << std::endl;
+}
+
+bool ClassInfo::isProtected() {
+        return _protected;
 }
 
 void ClassInfo::_printAttr() {

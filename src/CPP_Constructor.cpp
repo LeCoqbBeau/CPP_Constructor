@@ -140,11 +140,14 @@ void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
 }
 
 void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
-	hpp << "private:" << std::endl;
-	if (classInfo->getAttribute().getHead()) {
+        if(!classInfo->isProtected())
+                hpp << "private:" << std::endl;
+        else
+                hpp << "protected:" << std::endl;
+        if (classInfo->getAttribute().getHead()) {
                 AttributeInfo *head = classInfo->getAttribute().getHead();
                 while(head != nullptr) {
-                        hpp << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
+                        hpp << '\t' << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
                         head = head->getNext();
                 }
         }
