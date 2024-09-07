@@ -292,7 +292,7 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 		writePrivateH(h, classInfo, setting);
 		writePublicH(h, classInfo, setting);
 	}
-	h << "}" << std::endl;
+	h << "};" << std::endl;
 	h << std::endl;
 	if(!setting.pragma)
 		h << "#endif //" << uppercase << std::endl;
