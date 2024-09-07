@@ -10,7 +10,8 @@ SRC_NAME =	main.cpp \
 			CPP_Constructor.cpp \
 			ClassInfo.cpp \
 			AttributeList.cpp \
-			AttributeInfo.cpp
+			AttributeInfo.cpp \
+			options.cpp
 
 OBJ_DIR = obj/
 OBJ_NAME = $(SRC_NAME:.cpp=.o)

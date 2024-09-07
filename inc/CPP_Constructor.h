@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "colors.h"
+#include "options.h"
 
 #define OUTPUT_DIR "output"
 
@@ -25,12 +26,12 @@ private:
 	void _createClass();
 	void _printClasses();
 	void _editClass();
-	void _exportClass();
+	void _exportClass(Setting setting);
 	void _writeH(ClassInfo *classInfo);
 	void _writeCPP(ClassInfo *classInfo);
 public:
 	void createOutputDir();
-	void shellStart();
+	void shellStart(Setting setting);
 };
 
 std::string	userInput(const std::string &msg, bool(*check)(std::string));

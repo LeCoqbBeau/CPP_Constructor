@@ -8,11 +8,11 @@
 void CPP_Constructor::createOutputDir() {
 	struct stat sb;
 	mkdir(OUTPUT_DIR, 0755);
-	mkdir(OUTPUT_DIR"/src", 0755);
-	mkdir(OUTPUT_DIR"/inc", 0755);
+	mkdir(OUTPUT_DIR "/src", 0755);
+	mkdir(OUTPUT_DIR "/inc", 0755);
 	if (stat(OUTPUT_DIR, &sb)
-		|| stat(OUTPUT_DIR"/inc", &sb)
-		|| stat(OUTPUT_DIR"/src", &sb))
+		|| stat(OUTPUT_DIR "/inc", &sb)
+		|| stat(OUTPUT_DIR "/src", &sb))
 	{
 		std::cerr << BRED "Error creating the output folder." << std::endl;
 		std::cerr << "Exiting program..." CLR << std::endl;
@@ -20,7 +20,7 @@ void CPP_Constructor::createOutputDir() {
 	}
 }
 
-void CPP_Constructor::shellStart() {
+void CPP_Constructor::shellStart(Setting setting) {
 	std::string input;
 
 	std::cout << std::endl;
@@ -47,7 +47,7 @@ void CPP_Constructor::shellStart() {
 				_classes.back()->shellStart();
 		}
 		else if (input == "export" && !_classes.empty())
-			_exportClass();
+			_exportClass(setting);
 		else
 			std::cout << YLW "Unrecognized input OR no loaded classes, verify using the \'help\' command" CLR << std::endl;
 	}
@@ -120,7 +120,7 @@ void CPP_Constructor::_editClass() {
 	std::cerr << BRED "Class not found" CLR << std::endl;
 }
 
-void CPP_Constructor::_exportClass() {
+void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << BCYN "Exporting all loaded classes..." CLR << std::endl;
 	std::cout << " ( ";
 	for (ClassInfo *loop: _classes) {
