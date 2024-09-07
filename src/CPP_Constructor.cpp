@@ -3,16 +3,17 @@
 //
 
 #include "CPP_Constructor.h"
+#include "AttributeInfo.h"
 #include "ClassInfo.h"
 
 void CPP_Constructor::createOutputDir() {
 	struct stat sb;
 	mkdir(OUTPUT_DIR, 0755);
-	mkdir(OUTPUT_DIR"/src", 0755);
-	mkdir(OUTPUT_DIR"/inc", 0755);
+	mkdir(OUTPUT_DIR "/src", 0755);
+	mkdir(OUTPUT_DIR "/inc", 0755);
 	if (stat(OUTPUT_DIR, &sb)
-		|| stat(OUTPUT_DIR"/inc", &sb)
-		|| stat(OUTPUT_DIR"/src", &sb))
+		|| stat(OUTPUT_DIR "/inc", &sb)
+		|| stat(OUTPUT_DIR "/src", &sb))
 	{
 		std::cerr << BRED "Error creating the output folder." << std::endl;
 		std::cerr << "Exiting program..." CLR << std::endl;
@@ -20,7 +21,7 @@ void CPP_Constructor::createOutputDir() {
 	}
 }
 
-void CPP_Constructor::shellStart() {
+void CPP_Constructor::shellStart(Setting setting) {
 	std::string input;
 
 	std::cout << std::endl;
@@ -47,7 +48,7 @@ void CPP_Constructor::shellStart() {
 				_classes.back()->shellStart();
 		}
 		else if (input == "export" && !_classes.empty())
-			_exportClass();
+			_exportClass(setting);
 		else
 			std::cout << YLW "Unrecognized input OR no loaded classes, verify using the \'help\' command" CLR << std::endl;
 	}
@@ -120,22 +121,41 @@ void CPP_Constructor::_editClass() {
 	std::cerr << BRED "Class not found" CLR << std::endl;
 }
 
-void CPP_Constructor::_exportClass() {
+void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << BCYN "Exporting all loaded classes..." CLR << std::endl;
 	std::cout << " ( ";
 	for (ClassInfo *loop: _classes) {
 		std::cout << loop->getName() << " ";
-		_writeH(loop);
-		_writeCPP(loop);
+		_writeH(loop, setting);
+		_writeCPP(loop, setting);
 	}
 	std::cout << ") " << std::endl;
-
 }
 
-void CPP_Constructor::_writeH(ClassInfo *classInfo) {
+void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+        (void) classInfo;
+        (void) setting;
+	hpp << "public:" << std::endl;
+}
+
+void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+        if(!classInfo->isProtected())
+                hpp << "private:" << std::endl;
+        else
+                hpp << "protected:" << std::endl;
+        if (classInfo->getAttribute().getHead()) {
+                AttributeInfo *head = classInfo->getAttribute().getHead();
+                while(head != nullptr) {
+                        hpp << '\t' << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
+                        head = head->getNext();
+                }
+        }
+}
+
+void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream hpp;
 	std::string uppercase;
-	hpp.open(OUTPUT_DIR"/inc/" + classInfo->getName(), std::ios::trunc);
+	hpp.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
 	if (!hpp.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
@@ -144,23 +164,32 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo) {
 	uppercase = classInfo->getName();
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
-	hpp << "#ifndef " << uppercase << "_H" << std::endl;
-	hpp << "# define " << uppercase << "_H" << std::endl;
+        if(setting.pragma) {
+                hpp << "#pragma once" << std::endl;
+        } else {
+        	hpp << "#ifndef " << uppercase << "_H" << std::endl;
+        	hpp << "# define " << uppercase << "_H" << std::endl;
+        }
 	hpp << std::endl;
 	hpp << "class " << classInfo->getName() << std::endl;
 	hpp << "{" << std::endl;
-	hpp << "public:" << std::endl;
-	if (classInfo->getAttribute().getHead())
-		;
-	hpp << "private:" << std::endl;
+        if(!setting.inverted) {
+                writePublicH(hpp, classInfo, setting);
+                writePrivateH(hpp, classInfo, setting);
+        } else {
+                writePrivateH(hpp, classInfo, setting);
+                writePublicH(hpp, classInfo, setting);
+        }
 	hpp << "}" << std::endl;
 	hpp << std::endl;
-	hpp << "#endif //" << uppercase << std::endl;
+	if(!setting.pragma)
+                hpp << "#endif //" << uppercase << std::endl;
 	hpp.close();
 }
 
-void CPP_Constructor::_writeCPP(ClassInfo *classInfo) {
+void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 	(void)classInfo;
+        (void)setting;
 }
 
 std::string userInput(const std::string &msg, bool(*check)(std::string)) {

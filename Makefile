@@ -2,7 +2,7 @@ NAME = CPP_Constructor
 
 INCLUDES = inc/
 
-CPP_FLAGS = -I$(INCLUDES) -Wall -Werror -Wextra -g
+CPP_FLAGS = -I$(INCLUDES) -Wall -Wextra -g
 CC = c++
 
 SRC_DIR = src/
@@ -10,7 +10,8 @@ SRC_NAME =	main.cpp \
 			CPP_Constructor.cpp \
 			ClassInfo.cpp \
 			AttributeList.cpp \
-			AttributeInfo.cpp
+			AttributeInfo.cpp \
+			options.cpp
 
 OBJ_DIR = obj/
 OBJ_NAME = $(SRC_NAME:.cpp=.o)

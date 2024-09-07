@@ -5,7 +5,7 @@
 #include "AttributeInfo.h"
 
 AttributeInfo::AttributeInfo() {
-	_next = __nullptr;
+	_next = nullptr;
 }
 
 const std::string &AttributeInfo::getName() const {
