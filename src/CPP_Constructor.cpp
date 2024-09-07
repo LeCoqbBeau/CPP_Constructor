@@ -148,6 +148,11 @@ void CPP_Constructor::_exportClass(Setting setting) {
 		_writeCPP(loop, setting);
 	}
 	std::cout << ") " << std::endl;
+	if (!setting.color)
+		return ;
+	std::ifstream src("inc/colors.h", std::ios::binary);
+	std::ofstream dest(OUTPUT_DIR "/inc/colors.h", std::ios::binary);
+	dest << src.rdbuf();
 }
 
 static std::string toCamelCase(const std::string &str)
@@ -191,7 +196,6 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 	(void)setting;
 
 	h << "public:" << std::endl;
-
 	{
 		h << "\t// Orthodox Canonical Form" << std::endl;
 		h << "\t" << classInfo->getName() << "();" << std::endl;
@@ -212,11 +216,13 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 		h << "\t" << classInfo->getName() << "&operator=(const " << classInfo->getName() << " &rhs);" << std::endl;
 		h << "\t~" << classInfo->getName() << "();" << std::endl;
 	}
-	h << std::endl;
 	{
+		loop = classInfo->getAttribute().getHead();
+		if (!loop)
+			goto end;
+		h << std::endl;
 		h << "\t// Accessors" << std::endl;
 		std::string camelCased;
-		loop = classInfo->getAttribute().getHead();
 		while (loop)
 		{
 			camelCased = toCamelCase(loop->getName());
@@ -225,7 +231,7 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 			loop = loop->getNext();
 		}
 	}
-
+end:
 	h << std::endl;
 }
 
@@ -329,11 +335,11 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 			}
 			cpp << "}" << std::endl;
 		}
-		cpp << std::endl;
 		do {
 			loop = classInfo->getAttribute().getHead();
 			if (!loop)
 				break;
+			cpp << std::endl;
 			cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
 			while (loop->getNext())
 			{
