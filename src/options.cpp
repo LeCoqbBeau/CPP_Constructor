@@ -52,7 +52,7 @@ end:
 
 void usage(char *program) {
         std::cerr << "Usage : " << program << " [OPTIONS]" << std::endl;
-        std::cerr << std::tab << "-i          | --invert          : invert public and private/protected part in header files" << std::endl;
+        std::cerr << std::tab << "-i          | --invert          : will write private/protected attributes first in header files" << std::endl;
         std::cerr << std::tab << "-p <prefix> | --prefix <prefix> : set custom prefix for variable names" << std::endl;
         std::cerr << std::tab << "-d          | --pragma          : set header protection to use pragma instead of ifndef" << std::endl;
 }
