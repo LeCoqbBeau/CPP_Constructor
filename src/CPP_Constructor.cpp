@@ -132,17 +132,30 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << ") " << std::endl;
 }
 
-static void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
-	(void) classInfo;
-	(void) setting;
-	hpp << "public:" << std::endl;
+static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
+	h << "public:" << std::endl;
+
+	AttributeInfo *head = classInfo->getAttribute().getHead();
+	std::string snake_cased;
+	std::string head_name;
+	head_name = head->getName();
+	snake_cased += tolower(head_name[0]);
+	while(head != nullptr) {
+		for (ulong i = 1; i < head_name.length(); ++i) {
+			if (isupper(head_name[i]))
+				snake_cased += '_';
+			snake_cased += tolower(head_name[i]);
+		}
+		h << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
+		head = head->getNext();
+	}
 }
 
-static void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
+static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
 	if(!classInfo->isProtected())
-		hpp << "private:" << std::endl;
+		h << "private:" << std::endl;
 	else
-		hpp << "protected:" << std::endl;
+		h << "protected:" << std::endl;
 	if (!classInfo->getAttribute().getHead())
 		return;
 	AttributeInfo *head = classInfo->getAttribute().getHead();
@@ -156,16 +169,16 @@ static void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting sett
 				snake_cased += '_';
 			snake_cased += tolower(head_name[i]);
 		}
-		hpp << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
+		h << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
 		head = head->getNext();
 	}
 }
 
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
-	std::ofstream hpp;
+	std::ofstream h;
 	std::string uppercase;
-	hpp.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
-	if (!hpp.is_open())
+	h.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
+	if (!h.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
 		return;
@@ -174,33 +187,33 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
 	if(setting.pragma) {
-			hpp << "#pragma once" << std::endl;
+			h << "#pragma once" << std::endl;
 	} else {
-		hpp << "#ifndef " << uppercase << "_H" << std::endl;
-		hpp << "# define " << uppercase << "_H" << std::endl;
+		h << "#ifndef " << uppercase << "_H" << std::endl;
+		h << "# define " << uppercase << "_H" << std::endl;
 	}
 	if (setting.lib) {
-		hpp << std::endl;
-		hpp << "# include <iostream>" << std::endl;
-		hpp << "# include <string>" << std::endl;
+		h << std::endl;
+		h << "# include <iostream>" << std::endl;
+		h << "# include <string>" << std::endl;
 	}
 	if (setting.color)
-		hpp << "# include \"colors.h\"" << std::endl;
-	hpp << std::endl;
-	hpp << "class " << classInfo->getName() << std::endl;
-	hpp << "{" << std::endl;
+		h << "# include \"colors.h\"" << std::endl;
+	h << std::endl;
+	h << "class " << classInfo->getName() << std::endl;
+	h << "{" << std::endl;
 	if(!setting.inverted) {
-		writePublicH(hpp, classInfo, setting);
-		writePrivateH(hpp, classInfo, setting);
+		writePublicH(h, classInfo, setting);
+		writePrivateH(h, classInfo, setting);
 	} else {
-		writePrivateH(hpp, classInfo, setting);
-		writePublicH(hpp, classInfo, setting);
+		writePrivateH(h, classInfo, setting);
+		writePublicH(h, classInfo, setting);
 	}
-	hpp << "}" << std::endl;
-	hpp << std::endl;
+	h << "}" << std::endl;
+	h << std::endl;
 	if(!setting.pragma)
-		hpp << "#endif //" << uppercase << std::endl;
-	hpp.close();
+		h << "#endif //" << uppercase << std::endl;
+	h.close();
 }
 
 void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
