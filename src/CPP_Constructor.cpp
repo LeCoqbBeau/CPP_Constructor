@@ -177,6 +177,7 @@ static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting settin
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream h;
 	std::string uppercase;
+	std::string camelcase;
 	h.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
 	if (!h.is_open())
 	{
@@ -186,6 +187,16 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	uppercase = classInfo->getName();
 	for (ulong i = 0; i < uppercase.length(); ++i)
 		uppercase[i] = toupper(uppercase[i]);
+	camelcase += uppercase[0];
+	for (ulong i = 1; i < uppercase.length(); ++i) {
+		if (uppercase[i] == '_')
+		{
+			i++;
+			camelcase += uppercase[i];
+		}
+		else
+			camelcase += tolower(uppercase[i]);
+	}
 	if(setting.pragma) {
 			h << "#pragma once" << std::endl;
 	} else {
