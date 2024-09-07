@@ -150,15 +150,81 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << ") " << std::endl;
 }
 
+static std::string toCamelCase(const std::string &str)
+{
+	std::string	ret;
+	int i = 0;
+	while (!isalnum(str[i++]));
+	ret += toupper(str[i - 1]);
+	while (str[i])
+	{
+		if (isspace(str[i]) || str[i] == '_')
+		{
+			while (isspace(str[i++]));
+			ret += toupper(str[i]);
+		}
+		else
+			ret += tolower(str[i]);
+		i++;
+	}
+	return ret;
+}
+
+static std::string toSnakeCase(const std::string &str)
+{
+	std::string	ret;
+	int i = 0;
+	while (!isalnum(str[i++]));
+	ret += tolower(str[i - 1]);
+	while (str[i])
+	{
+		if (isupper(str[i]))
+			ret += '_';
+		ret += tolower(str[i]);
+		i++;
+	}
+	return ret;
+}
+
 static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
+	AttributeInfo *loop;
+	(void)setting;
+
 	h << "public:" << std::endl;
 
-	// Orthodox Canonical Form
+	h << "\t// Orthodox Canonical Form" << std::endl;
+	h << "\t" << classInfo->getName() << "();" << std::endl;
+	{
+		h << "\t" << classInfo->getName() << "(";
+		loop = classInfo->getAttribute().getHead();
+		while (loop->getNext())
+		{
+			h << "const " << loop->getType() << " &" << loop->getName() << ", ";
+			loop = loop->getNext();
+		}
+		h << "const " << loop->getType() << " &" << loop->getName();
+		h << ");" << std::endl;
+	}
+	h << "\t" << classInfo->getName() << "(const " << classInfo->getName() << " &src);" << std::endl;
+	h << "\t" << classInfo->getName() << "& operator = (const " << classInfo->getName() << " &rhs);" << std::endl;
+	h << "\t~" << classInfo->getName() << "();" << std::endl;
 
+	h << std::endl;
 
+	h << "\t// Accessors" << std::endl;
+	{
+		std::string camelCased;
+		loop = classInfo->getAttribute().getHead();
+		while (loop)
+		{
+			camelCased =  toCamelCase(loop->getName());
+			h << "\t" << loop->getType() << " &get" << camelCased << "();" << std::endl;
+			h << "\t" << "void set" << camelCased << "(const " << loop->getType() << " &" << camelCased << ");" << std::endl;
+			loop = loop->getNext();
+		}
+	}
 
-	// Accessors
-
+	h << std::endl;
 }
 
 static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
@@ -170,15 +236,8 @@ static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting settin
 		return;
 	AttributeInfo *head = classInfo->getAttribute().getHead();
 	std::string snake_cased;
-	std::string head_name;
-	head_name = head->getName();
-	snake_cased += tolower(head_name[0]);
 	while(head != nullptr) {
-		for (ulong i = 1; i < head_name.length(); ++i) {
-			if (isupper(head_name[i]))
-				snake_cased += '_';
-			snake_cased += tolower(head_name[i]);
-		}
+		snake_cased = toSnakeCase(head->getName());
 		h << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
 		head = head->getNext();
 	}

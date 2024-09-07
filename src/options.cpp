@@ -28,7 +28,7 @@ Setting getopts(int count, char *args[]) {
 		.lib = false,
 		.color = false,
 		.announcer = false,
-		.prefix = "_",
+		.prefix = "_"
 	};
 	if(count == 0) goto end;
 	for(int i = 0; i < count; i++) {
