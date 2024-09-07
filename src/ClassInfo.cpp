@@ -4,7 +4,8 @@
 
 #include "ClassInfo.h"
 
-ClassInfo::ClassInfo() {
+ClassInfo::ClassInfo(Setting *setting) {
+        _setting = setting;
 	_protected = false;
 }
 
@@ -68,7 +69,7 @@ void ClassInfo::_printAttr() {
 	std::cout << "Class: " BOLD << _name << CLR << std::endl;
 	while (loop)
 	{
-		std::cout << "\t" << loop->getType() << " _" << loop->getName() << std::endl;
+		std::cout << "\t" << loop->getType() << " " << _setting->prefix << loop->getName() << std::endl;
 		loop = loop->getNext();
 	}
 	std::cout << std::endl;
@@ -98,7 +99,7 @@ void ClassInfo::_editAttr() {
 	AttributeInfo *loop = getAttribute().getHead();
 	std::string input;
 	_printAttr();
-	input = userInput("Enter the name (without \'_\') of the attribute to edit", userInputBypass);
+	input = userInput("Enter the name (without the prefix \"" + _setting->prefix + "\") of the attribute to edit", userInputBypass);
 	while (loop) {
 		if (loop->getName() == input)
 			break;

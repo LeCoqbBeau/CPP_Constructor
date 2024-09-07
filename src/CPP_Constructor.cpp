@@ -37,13 +37,13 @@ void CPP_Constructor::shellStart(Setting setting) {
 		else if (input == "exit")
 			break ;
 		else if (input == "create")
-			_createClass();
+			_createClass(&setting);
 		else if (input == "print")
 			_printClasses();
 		else if (input == "edit")
 			_editClass();
 		else if (input == "cne") {
-			_createClass();
+			_createClass(&setting);
 			if (!_classes.empty())
 				_classes.back()->shellStart();
 		}
@@ -67,8 +67,8 @@ void CPP_Constructor::_printHelp() {
 	std::cout << std::endl;
 }
 
-void CPP_Constructor::_createClass() {
-	ClassInfo *newClass = new ClassInfo;
+void CPP_Constructor::_createClass(Setting *setting) {
+	ClassInfo *newClass = new ClassInfo(setting);
 
 	newClass->setName(userInput("Enter the class's name", userInputBypass));
 	{
