@@ -217,7 +217,7 @@ static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting
 		loop = classInfo->getAttribute().getHead();
 		while (loop)
 		{
-			camelCased =  toCamelCase(loop->getName());
+			camelCased = toCamelCase(loop->getName());
 			h << "\t" << loop->getType() << " &get" << camelCased << "();" << std::endl;
 			h << "\t" << "void set" << camelCased << "(const " << loop->getType() << " &" << camelCased << ");" << std::endl;
 			loop = loop->getNext();
@@ -286,8 +286,84 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 }
 
 void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
-	(void)classInfo;
-	(void)setting;
+	std::ofstream cpp;
+	AttributeInfo	*loop;
+
+	cpp.open(OUTPUT_DIR "/src/" + classInfo->getName() + ".cpp", std::ios::trunc);
+	if (!cpp.is_open())
+	{
+		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
+		return;
+	}
+	cpp << "#include \"" << classInfo->getName() << ".h\"" << std::endl;
+	cpp << std::endl;
+	{
+		cpp << classInfo->getName() << "::" << classInfo->getName() << "() {" << std::endl;
+		if (setting.announcer)
+		{
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BGRN ";
+			cpp << '"' << classInfo->getName() << " Default Constructor called\"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << ";" << std::endl;
+
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BBLK ";
+			cpp << "\" [ \" << &this << \" ] \"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << " << std::endl;" << std::endl;
+		}
+		cpp << "}" << std::endl;
+	}
+	cpp << std::endl;
+	{
+		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
+		loop = classInfo->getAttribute().getHead();
+		while (loop->getNext())
+		{
+			cpp << "const " << loop->getType() << " &" << loop->getName() << ", ";
+			loop = loop->getNext();
+		}
+		cpp << "const " << loop->getType() << " &" << loop->getName();
+		cpp << ") {" << std::endl;
+		if (setting.announcer)
+		{
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BGRN ";
+			cpp << '"' << classInfo->getName() << " Parameterized Constructor called\"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << ";" << std::endl;
+
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BBLK ";
+			cpp << "\" [ \" << &this << \" ] \"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << " << std::endl;" << std::endl;
+		}
+		loop = classInfo->getAttribute().getHead();
+		while (loop)
+		{
+			cpp << "\tthis->" << setting.prefix + loop->getName() << " = " << loop->getName() << ";" << std::endl;
+			loop = loop->getNext();
+		}
+		cpp << "}" << std::endl;
+	}
+	{
+
+	}
+	{
+	}
+	{
+	}
+	cpp.close();
 }
 
 std::string userInput(const std::string &msg, bool(*check)(std::string)) {
