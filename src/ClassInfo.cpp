@@ -4,6 +4,10 @@
 
 #include "ClassInfo.h"
 
+ClassInfo::ClassInfo() {
+	_protected = false;
+}
+
 const std::string &ClassInfo::getName() const {
 	return _name;
 }

@@ -18,6 +18,7 @@ class ClassInfo {
 		void _editAttr();
 		void _printAttr();
 	public:
+		ClassInfo();
 		const std::string &getName() const;
 		void setName(const std::string &name);
 		bool isProtected();
