@@ -328,9 +328,11 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 		cpp << "}" << std::endl;
 	}
 	cpp << std::endl;
-	{
-		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
+	do {
 		loop = classInfo->getAttribute().getHead();
+		if (!loop)
+			break;
+		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
 		while (loop->getNext())
 		{
 			cpp << "const " << loop->getType() << " &" << loop->getName() << ", ";
@@ -363,14 +365,91 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 			loop = loop->getNext();
 		}
 		cpp << "}" << std::endl;
-	}
+	} while(false);
+	cpp << std::endl;
 	{
+		cpp << classInfo->getName() << "::" << classInfo->getName() << "(";
+		cpp << "const " << classInfo->getName() << " &src) {" << std::endl;
+		if (setting.announcer)
+		{
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BGRN ";
+			cpp << '"' << classInfo->getName() << " Copy Constructor called\"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << ";" << std::endl;
 
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BBLK ";
+			cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << " << std::endl;" << std::endl;
+		}
+		loop = classInfo->getAttribute().getHead();
+		while (loop)
+		{
+			cpp << "\tthis->" << setting.prefix << loop->getName() << " = src." << setting.prefix << loop->getName() << ";" << std::endl;
+			loop = loop->getNext();
+		}
+		cpp << "}" << std::endl;
 	}
+	cpp << std::endl;
 	{
+		cpp << classInfo->getName() << " &" << classInfo->getName() << "::operator=(const " << classInfo->getName() << " &rhs) {" << std::endl;
+		if (setting.announcer)
+		{
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BGRN ";
+			cpp << '"' << classInfo->getName() << " Assignment Operator called\"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << ";" << std::endl;
+
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BBLK ";
+			cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << " << std::endl;" << std::endl;
+		}
+		loop = classInfo->getAttribute().getHead();
+		while (loop)
+		{
+			cpp << "\tthis->" << setting.prefix << loop->getName() << " = rhs." << setting.prefix << loop->getName() << ";" << std::endl;
+			loop = loop->getNext();
+		}
+		cpp << "\treturn *this;" << std::endl;
+		cpp << "}" << std::endl;
 	}
+	cpp << std::endl;
 	{
+		cpp << classInfo->getName() << "::~" << classInfo->getName() << "() {" << std::endl;
+		if (setting.announcer)
+		{
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BGRN ";
+			cpp << '"' << classInfo->getName() << " Destructor called\"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << ";" << std::endl;
+
+			cpp << "\tstd::cout << ";
+			if (setting.color)
+				cpp << "BBLK ";
+			cpp << "\" [ \" << &this << \" ] \"";
+			if (setting.color)
+				cpp << " CLR";
+			cpp << " << std::endl;" << std::endl;
+		}
+		cpp << "}" << std::endl;
 	}
+	cpp << std::endl;
 	cpp.close();
 }
 
