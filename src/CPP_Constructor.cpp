@@ -139,25 +139,25 @@ static void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setti
 }
 
 static void writePrivateH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
-	std::string snake_cased;
-	std::string head_name;
 	if(!classInfo->isProtected())
 		hpp << "private:" << std::endl;
 	else
 		hpp << "protected:" << std::endl;
-	if (classInfo->getAttribute().getHead()) {
-		AttributeInfo *head = classInfo->getAttribute().getHead();
-		head_name = head->getName();
-		snake_cased += tolower(head_name[0]);
-		while(head != nullptr) {
-			for (ulong i = 1; i < head_name.length(); ++i) {
-				if (isupper(head_name[i]))
-					snake_cased += '_';
-				snake_cased += tolower(head_name[i]);
-			}
-			hpp << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
-			head = head->getNext();
+	if (!classInfo->getAttribute().getHead())
+		return;
+	AttributeInfo *head = classInfo->getAttribute().getHead();
+	std::string snake_cased;
+	std::string head_name;
+	head_name = head->getName();
+	snake_cased += tolower(head_name[0]);
+	while(head != nullptr) {
+		for (ulong i = 1; i < head_name.length(); ++i) {
+			if (isupper(head_name[i]))
+				snake_cased += '_';
+			snake_cased += tolower(head_name[i]);
 		}
+		hpp << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
+		head = head->getNext();
 	}
 }
 
@@ -179,16 +179,23 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 		hpp << "#ifndef " << uppercase << "_H" << std::endl;
 		hpp << "# define " << uppercase << "_H" << std::endl;
 	}
+	if (setting.lib) {
+		hpp << std::endl;
+		hpp << "# include <iostream>" << std::endl;
+		hpp << "# include <string>" << std::endl;
+	}
+	if (setting.color)
+		hpp << "# include \"colors.h\"" << std::endl;
 	hpp << std::endl;
 	hpp << "class " << classInfo->getName() << std::endl;
 	hpp << "{" << std::endl;
-        if(!setting.inverted) {
-			writePublicH(hpp, classInfo, setting);
-			writePrivateH(hpp, classInfo, setting);
-        } else {
-			writePrivateH(hpp, classInfo, setting);
-			writePublicH(hpp, classInfo, setting);
-        }
+	if(!setting.inverted) {
+		writePublicH(hpp, classInfo, setting);
+		writePrivateH(hpp, classInfo, setting);
+	} else {
+		writePrivateH(hpp, classInfo, setting);
+		writePublicH(hpp, classInfo, setting);
+	}
 	hpp << "}" << std::endl;
 	hpp << std::endl;
 	if(!setting.pragma)

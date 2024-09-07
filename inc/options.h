@@ -10,6 +10,9 @@
 struct Setting {
        bool inverted; 
        bool pragma;
+	   bool	lib;
+	   bool color;
+	   bool announcer;
        std::string prefix;
 };
 
