@@ -127,10 +127,9 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	for (ClassInfo *loop: _classes) {
 		std::cout << loop->getName() << " ";
 		_writeH(loop, setting);
-		_writeCPP(loop);
+		_writeCPP(loop, setting);
 	}
 	std::cout << ") " << std::endl;
-
 }
 
 void writePublicH(std::ofstream &hpp, ClassInfo *classInfo, Setting setting) {
@@ -190,6 +189,7 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 
 void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 	(void)classInfo;
+        (void)setting;
 }
 
 std::string userInput(const std::string &msg, bool(*check)(std::string)) {
