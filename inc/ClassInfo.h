@@ -11,16 +11,16 @@
 
 class ClassInfo {
 	private:
-		std::string		_name;
-                bool _protected;
-		AttributeList	_attributes;
+		std::string _name;
+		bool _protected;
+		AttributeList _attributes;
 		void _printHelp();
 		void _editAttr();
 		void _printAttr();
 	public:
 		const std::string &getName() const;
 		void setName(const std::string &name);
-                bool isProtected();
+		bool isProtected();
 		AttributeList &getAttribute();
 		void shellStart();
 };
