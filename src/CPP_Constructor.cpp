@@ -328,7 +328,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 				cpp << "\tstd::cout << ";
 				if (setting.color)
 					cpp << "BBLK ";
-				cpp << "\" [ \" << &this << \" ] \"";
+				cpp << "\" [ \" << this << \" ] \"";
 				if (setting.color)
 					cpp << " CLR";
 				cpp << " << std::endl;" << std::endl;
@@ -361,7 +361,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 				cpp << "\tstd::cout << ";
 				if (setting.color)
 					cpp << "BBLK ";
-				cpp << "\" [ \" << &this << \" ] \"";
+				cpp << "\" [ \" << this << \" ] \"";
 				if (setting.color)
 					cpp << " CLR";
 				cpp << " << std::endl;" << std::endl;
@@ -391,7 +391,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 				cpp << "\tstd::cout << ";
 				if (setting.color)
 					cpp << "BBLK ";
-				cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+				cpp << "\" [ from \" << &src << \"to\" << this << \" ] \"";
 				if (setting.color)
 					cpp << " CLR";
 				cpp << " << std::endl;" << std::endl;
@@ -420,7 +420,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 				cpp << "\tstd::cout << ";
 				if (setting.color)
 					cpp << "BBLK ";
-				cpp << "\" [ from \" << &rhs << to << &this << \" ] \"";
+				cpp << "\" [ from \" << &rhs << \"to\" << this << \" ] \"";
 				if (setting.color)
 					cpp << " CLR";
 				cpp << " << std::endl;" << std::endl;
@@ -450,7 +450,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 				cpp << "\tstd::cout << ";
 				if (setting.color)
 					cpp << "BBLK ";
-				cpp << "\" [ \" << &this << \" ] \"";
+				cpp << "\" [ \" << this << \" ] \"";
 				if (setting.color)
 					cpp << " CLR";
 				cpp << " << std::endl;" << std::endl;
