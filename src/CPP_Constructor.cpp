@@ -155,7 +155,7 @@ void CPP_Constructor::_writeH(ClassInfo *classInfo) {
 	hpp << "private:" << std::endl;
 	hpp << "}" << std::endl;
 	hpp << std::endl;
-	hpp << "#endif " <<
+	hpp << "#endif //" << uppercase << std::endl;
 	hpp.close();
 }
 
