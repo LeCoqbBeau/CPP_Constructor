@@ -21,19 +21,19 @@ class ClassInfo {
 		std::string _name;
 		bool _protected;
 		AttributeList _attributes;
-                std::vector<Includes> _includes;
-                Setting *_setting;
+		std::vector<Includes> _includes;
+		Setting *_setting;
 		void _printHelp();
 		void _editAttr();
 		void _printAttr();
-                void _addInclude();
+		void _addInclude();
 	public:
 		ClassInfo(Setting *setting);
 		const std::string &getName() const;
 		void setName(const std::string &name);
 		bool isProtected();
 		AttributeList &getAttribute();
-                std::vector<Includes> &getIncludes();
+		std::vector<Includes> &getIncludes();
 		void shellStart();
 };
 
