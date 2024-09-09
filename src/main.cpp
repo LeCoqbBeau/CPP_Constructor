@@ -18,7 +18,7 @@ int	main(int count, char *args[])
 	}
 	CPP_Constructor cppConstructor;
 
-	cppConstructor.createOutputDir();
+	cppConstructor.createOutputDir(setting);
 	cppConstructor.shellStart(setting);
         return 0;
 }

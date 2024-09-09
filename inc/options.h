@@ -7,12 +7,15 @@
 
 #include <string>
 
+#define OUTPUT_DIR "output"
+
 struct Setting {
        bool inverted; 
        bool pragma;
 	   bool	lib;
 	   bool color;
 	   bool announcer;
+	   std::string output;
        std::string prefix;
 };
 

@@ -78,8 +78,8 @@ void ClassInfo::_printHelp() {
 	std::cout << "\tadd: Adds an new attribute" << std::endl;
 	std::cout << "\tprint: Prints the class's attribute(s)" << std::endl;
 	std::cout << "\tedit: Edits an attribute's name or type" << std::endl;
-        std::cout << "\tprot: Set class to use protected instead of private" << std::endl;
-        std::cout << "\tinclude: add include in the class header" << std::endl;
+	std::cout << "\tprot: Set class to use protected instead of private" << std::endl;
+	std::cout << "\tinclude: add include in the class header" << std::endl;
 	std::cout << std::endl;
 }
 

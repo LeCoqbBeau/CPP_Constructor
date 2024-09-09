@@ -44,7 +44,8 @@ arch : `pacman -Su binutils g++ make`
 >   -l          | --lib             : add common CPP libraries into all headers
 >   -c          | --color           : exports an color library, and makes '-a' statements colored
 >   -a          | --announce        : add announcement statement to constructors, operators, and destructor
-> ```
+>   -o <dir>    | --output <dir>    : changes the output directory
+> > ```
 > 3. ???
 > 4. **_Profit!_**
 

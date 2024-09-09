@@ -28,7 +28,8 @@ Setting getopts(int count, char *args[]) {
 		.lib = false,
 		.color = false,
 		.announcer = false,
-		.prefix = "_"
+		.output = OUTPUT_DIR,
+		.prefix = "_",
 	};
 	if(count == 0) goto end;
 	for(int i = 0; i < count; i++) {
@@ -51,6 +52,14 @@ Setting getopts(int count, char *args[]) {
 			ret.color = true;
 		} else if (arg == "-a" || arg == "--announce") {
 			ret.announcer = true;
+		} else if (arg == "-o" || arg == "--output") {
+			i++;
+			if(count - i < 1)
+				throw std::logic_error("missing argument for " + arg + " argument");
+			std::string directory = args[i];
+			if(!isValidPrefix(directory))
+				throw std::logic_error("directory should be define as this regex : [a-zA-Z_]([a-zA-Z0-9_])*");
+			ret.output = directory;
 		} else {
 			throw std::logic_error("unknown argument : " + arg);
 		}
@@ -67,4 +76,5 @@ void usage(char *program) {
 	std::cerr << std::tab << "-l          | --lib             : add common CPP libraries into all headers" << std ::endl;
 	std::cerr << std::tab << "-c          | --color           : exports an color library, and makes '-a' statements colored" << std ::endl;
 	std::cerr << std::tab << "-a          | --announce        : add announcement statement to constructors, operators, and destructor" << std ::endl;
+	std::cerr << std::tab << "-o <dir>    | --output <dir>    : changes the output directory" << std::endl;
 }

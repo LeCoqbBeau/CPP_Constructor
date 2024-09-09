@@ -6,14 +6,17 @@
 #include "AttributeInfo.h"
 #include "ClassInfo.h"
 
-void CPP_Constructor::createOutputDir() {
+void CPP_Constructor::createOutputDir(Setting setting) {
 	struct stat sb;
-	mkdir(OUTPUT_DIR, 0755);
-	mkdir(OUTPUT_DIR "/src", 0755);
-	mkdir(OUTPUT_DIR "/inc", 0755);
-	if (stat(OUTPUT_DIR, &sb)
-		|| stat(OUTPUT_DIR "/inc", &sb)
-		|| stat(OUTPUT_DIR "/src", &sb))
+	std::string out = setting.output;
+	std::string inc = out + "/src";
+	std::string src = out + "/inc";
+	mkdir(out.c_str(), 0755);
+	mkdir(src.c_str(), 0755);
+	mkdir(inc.c_str(), 0755);
+	if (stat(out.c_str(), &sb)
+		|| stat(inc.c_str(), &sb)
+		|| stat(src.c_str(), &sb))
 	{
 		std::cerr << BRED "Error creating the output folder." << std::endl;
 		std::cerr << "Exiting program..." CLR << std::endl;

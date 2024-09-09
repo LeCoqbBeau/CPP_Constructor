@@ -15,8 +15,6 @@
 #include "colors.h"
 #include "options.h"
 
-#define OUTPUT_DIR "output"
-
 class ClassInfo;
 
 class CPP_Constructor {
@@ -30,7 +28,7 @@ private:
 	void _writeH(ClassInfo *classInfo, Setting setting);
 	void _writeCPP(ClassInfo *classInfo, Setting setting);
 public:
-	void createOutputDir();
+	void createOutputDir(Setting setting);
 	void shellStart(Setting setting);
 };
 
