@@ -31,7 +31,7 @@ debian : `apt-get install binutils g++ make`
 arch : `pacman -Su binutils g++ make`
 
 ---
-## Usage
+## Launching CPP_Constructor
 
 > 1. **Build** the **program** using `make`
 >    - If you'd like, you can `make install PREFIX=<wanted path>`
@@ -49,3 +49,41 @@ arch : `pacman -Su binutils g++ make`
 > 4. **_Profit!_**
 
 ---
+## Usage
+
+> Once **CPP_Constructor** has been ran, a shell will be started.
+> 
+> **Please take note that no command takes parameters.**
+
+> Here is the list of all commands for the **Main-Shell**:
+>  - `help`: Prints a list of all available commands with a brief description
+>  - `exit`: Exits the program
+>  - `create`: Creates a Class
+>    - Display a prompt asking for a class name to create a class.
+>    - The inputted name will be automatically formatted to CamelCase
+>  - `print`: Display all classes with their attributes name
+>  - `edit`: Starts an other shell to edit a Class
+>    - Display a prompt asking for a class name to edit
+>    - It will start an other shell editing the class
+>    - The inputted name will not be formatted to CamelCase
+>  - `cne`: Creates and Edit a Class
+>    - Display a prompt asking for a class name to create a class.
+>    - Edits the last **created** class.
+>    - **Failing** to create the class will still edit the **last created class**
+>  - `export`: Creates an ___output___ directory and creates all files for all loaded classes.
+
+> Here is the list of all commands for the **Class-Shell**:
+>  - `help`: Prints a list of all available commands with a brief description
+>  - `exit`: Returns to the **Main-Shell**
+>  - `add`: Creates a new attribute for the currently edited class
+>    - Display a prompt asking for the new attribute's type
+>    - Display a prompt asking for the new attribute's name
+>  - `print`: Prints the current class and all of its attribute in a cleaner way
+>  - `edit`: Edit one attribute of the currently edited class
+>    - Display a prompt asking for the attribute's name
+>    - Then asks for if the user wants to modify the Name or the Type
+>    - Display a prompt asking for the modified value.
+>  - `prot`: Makes all the class attributes protected instead of private
+>  - `include`: Adds libraries to be included in the Class's header file
+>    - Display a prompt asking for the library name.
+>    - Asks the user if the library is global (<global.h>) or local ("local.h")
