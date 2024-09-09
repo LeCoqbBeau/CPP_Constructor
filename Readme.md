@@ -1,5 +1,5 @@
 # CPP_Constructor
-#### by LeCoqBeau
+#### by LeCoqBeau _& Palsfreniers_
 
 ---
 
@@ -24,11 +24,25 @@
 ---
 ## Installation
 
-> uh yhea sure...
+> to install this to your prefix:
 
-debian : `apt-get install binutils g++ make`
+debian : 
+```Bash
+$ apt-get install binutils g++ make
+```
 
-arch : `pacman -Su binutils g++ make`
+arch :
+```Bash
+pacman -Su binutils g++ make
+```
+
+> then to install CPP_constructor
+
+```Bash
+$ git clone https://github.com/LeCoqbBeau/CPP_Constructor
+$ cd CPP_Constructor
+$ make install PREFIX=<prefix> # default prefix is /usr/bin
+```
 
 ---
 ## Launching CPP_Constructor
@@ -37,7 +51,7 @@ arch : `pacman -Su binutils g++ make`
 >    - If you'd like, you can `make install PREFIX=<wanted path>`
 >    to make it runnable from everywhere on your pc
 > 2. **Acknowledge** all the **options** before **running** the **program**:
-> ```
+> ```Bash
 >   -i          | --invert          : will write private/protected attributes first in header files
 >   -p <prefix> | --prefix <prefix> : set custom prefix for variable names
 >   -d          | --pragma          : set header protection to use pragma instead of ifndef
@@ -45,9 +59,8 @@ arch : `pacman -Su binutils g++ make`
 >   -c          | --color           : exports an color library, and makes '-a' statements colored
 >   -a          | --announce        : add announcement statement to constructors, operators, and destructor
 >   -o <dir>    | --output <dir>    : changes the output directory
-> > ```
-> 3. ???
-> 4. **_Profit!_**
+> ```
+> 3. **_Profit!_**
 
 ---
 ## Usage
