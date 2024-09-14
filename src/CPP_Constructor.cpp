@@ -142,6 +142,43 @@ void CPP_Constructor::_editClass() {
 	std::cerr << BRED "Class not found" CLR << std::endl;
 }
 
+static void writeColorsH(Setting setting)
+{
+	std::ofstream h(setting.output + "/inc/colors.h", std::ios::binary);
+	if(setting.pragma) {
+		h << "#pragma once" << std::endl;
+	} else {
+		h << "#ifndef COLORS_H" << std::endl;
+		h << "# define COLORS_H" << std::endl;
+	}
+	h << std::endl;
+	h << R"(# define CLR "\033[0m")" << std::endl;
+	h << R"(# define BLK "\033[0;90m")" << std::endl;
+	h << R"(# define RED "\033[0;91m")" << std::endl;
+	h << R"(# define GRN "\033[0;92m")" << std::endl;
+	h << R"(# define YLW "\033[0;93m")" << std::endl;
+	h << R"(# define BLU "\033[0;94m")" << std::endl;
+	h << R"(# define PRP "\033[0;95m")" << std::endl;
+	h << R"(# define CYN "\033[0;96m")" << std::endl;
+	h << R"(# define WHT "\033[0;97m")" << std::endl;
+	h << std::endl;
+	h << R"(# define BOLD "\033[1m")" << std::endl;
+	h << R"(# define BBLK "\033[1;90m")" << std::endl;
+	h << R"(# define BRED "\033[1;91m")" << std::endl;
+	h << R"(# define BGRN "\033[1;92m")" << std::endl;
+	h << R"(# define BYLW "\033[1;93m")" << std::endl;
+	h << R"(# define BBLU "\033[1;94m")" << std::endl;
+	h << R"(# define BPRP "\033[1;95m")" << std::endl;
+	h << R"(# define BCYN "\033[1;96m")" << std::endl;
+	h << R"(# define BWHT "\033[1;97m")" << std::endl;
+	h << std::endl;
+	h << R"(# define RGB(r, g, b) "\033[38;2;" #r ";" #g ";" #b "m")" << std::endl;
+	h << std::endl;
+	if (!setting.pragma)
+		h << "#endif //COLORS" << std::endl;
+	h.close();
+}
+
 void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << BCYN "Exporting all loaded classes..." CLR << std::endl;
 	std::cout << " ( ";
@@ -153,9 +190,7 @@ void CPP_Constructor::_exportClass(Setting setting) {
 	std::cout << ") " << std::endl;
 	if (!setting.color)
 		return ;
-	std::ifstream src("inc/colors.h", std::ios::binary);
-	std::ofstream dest(OUTPUT_DIR "/inc/colors.h", std::ios::binary);
-	dest << src.rdbuf();
+	writeColorsH(setting);
 }
 
 static std::string toCamelCase(const std::string &str)
@@ -257,7 +292,7 @@ static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting settin
 void CPP_Constructor::_writeH(ClassInfo *classInfo, Setting setting) {
 	std::ofstream h;
 	std::string uppercase;
-	h.open(OUTPUT_DIR "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
+	h.open(setting.output + "/inc/" + classInfo->getName() + ".h", std::ios::trunc);
 	if (!h.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;
@@ -306,7 +341,7 @@ void CPP_Constructor::_writeCPP(ClassInfo *classInfo, Setting setting) {
 	std::ofstream cpp;
 	AttributeInfo	*loop;
 
-	cpp.open(OUTPUT_DIR "/src/" + classInfo->getName() + ".cpp", std::ios::trunc);
+	cpp.open(setting.output + "/src/" + classInfo->getName() + ".cpp", std::ios::trunc);
 	if (!cpp.is_open())
 	{
 		std::cerr << BRED "Couldn't create the file for " << classInfo->getName() << std::endl;

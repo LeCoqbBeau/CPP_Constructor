@@ -21,6 +21,14 @@ bool isValidPrefix(std::string prefix) {
 	return true;
 }
 
+bool isValidDir(std::string dir) {
+	for (auto c: dir) {
+		if (!isalnum(c) && c != '/' && c != '.' && c != '_' && c != '-')
+			return false;
+	}
+	return true;
+}
+
 Setting getopts(int count, char *args[]) {
 	Setting ret = {
 		.inverted = false,
@@ -57,8 +65,8 @@ Setting getopts(int count, char *args[]) {
 			if(count - i < 1)
 				throw std::logic_error("missing argument for " + arg + " argument");
 			std::string directory = args[i];
-			if(!isValidPrefix(directory))
-				throw std::logic_error("directory should be define as this regex : [a-zA-Z_]([a-zA-Z0-9_])*");
+			if(!isValidDir(directory))
+				throw std::logic_error("directory should only contain alnum, '/', '.', '-', '_'");
 			ret.output = directory;
 		} else {
 			throw std::logic_error("unknown argument : " + arg);
