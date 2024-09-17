@@ -213,22 +213,6 @@ static std::string toCamelCase(const std::string &str)
 	return ret;
 }
 
-static std::string toSnakeCase(const std::string &str)
-{
-	std::string	ret;
-	int i = 0;
-	while (!isalnum(str[i++]));
-	ret += tolower(str[i - 1]);
-	while (str[i])
-	{
-		if (isupper(str[i]))
-			ret += '_';
-		ret += tolower(str[i]);
-		i++;
-	}
-	return ret;
-}
-
 static void writePublicH(std::ofstream &h, ClassInfo *classInfo, Setting setting) {
 	AttributeInfo *loop;
 	(void)setting;
@@ -281,10 +265,8 @@ static void writePrivateH(std::ofstream &h, ClassInfo *classInfo, Setting settin
 	if (!classInfo->getAttribute().getHead())
 		return;
 	AttributeInfo *head = classInfo->getAttribute().getHead();
-	std::string snake_cased;
 	while(head != nullptr) {
-		snake_cased = toSnakeCase(head->getName());
-		h << '\t' << head->getType() << ' ' << setting.prefix << snake_cased << ';' << std::endl;
+		h << '\t' << head->getType() << ' ' << setting.prefix << head->getName() << ';' << std::endl;
 		head = head->getNext();
 	}
 }
